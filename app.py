@@ -10,7 +10,7 @@ class Employee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     position = db.Column(db.String(50))
-    age = db.Column(db.String(3))
+    age = db.Column(db.String(10))
 
     def __init__(self, name, position, age):
         self.name = name
@@ -19,11 +19,10 @@ class Employee(db.Model):
 
 
 with app.app_context():
-    if not "/employee.db":
-        db.create_all()
+    db.create_all()
 
 
-@app.route("/add_employee", methods="POST")
+@app.route('/add_employee', methods=['POST'])
 def add_employee():
     name = request.form['name']
     position = request.form['position']
@@ -31,7 +30,7 @@ def add_employee():
     employee = (name, position, age)
     db.session.add(employee)
     db.session.commit()
-    return "Employee added successfully"
+    return {"success": "Employee added successfully"}
 
 
 @app.route('/get_employee/<int:id>')
@@ -40,11 +39,11 @@ def list_employee(id):
     if employee:
         return jsonify({
             'id': employee.id,
+            'name': employee.name,
             'position': employee.position,
-            'age': employee.age
         })
     else:
-        {"error": "Employee is not found"}
+        return {"error": "Employee is not found"}
 
 
 if __name__ == "__main__":
