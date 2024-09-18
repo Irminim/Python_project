@@ -19,32 +19,32 @@ class Employee(db.Model):
 
 
 with app.app_context():
-    if not "/employee.db":
-        db.create_all()
+    db.create_all()
 
 
-@app.route("/add_employee", methods="POST")
+@app.route("/add_employee", methods=["POST"])
 def add_employee():
     name = request.form['name']
     position = request.form['position']
     age = request.form['age']
-    employee = (name, position, age)
+    employee = Employee(name, position, age)
     db.session.add(employee)
     db.session.commit()
-    return "Employee added successfully"
+    return {"Successfully" :"Employee added successfully"}
 
 
 @app.route('/get_employee/<int:id>')
 def list_employee(id):
     employee = Employee.query.get(id)
     if employee:
-        return jsonify({
+        return {
             'id': employee.id,
+            'name': employee.name,
             'position': employee.position,
             'age': employee.age
-        })
+        }
     else:
-        {"error": "Employee is not found"}
+        return {"error": "Employee is not found"}
 
 
 if __name__ == "__main__":
